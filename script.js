@@ -1,78 +1,108 @@
-// Các ngày từ Thứ 2 → Thứ 7
-const days = ['Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'];
+// ===== CONSTANTS =====
+const days = ['Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+const defaultNames = ['Trang', 'Thảo', 'Khoa', 'Phương', 'Phúc'];
 
-// Mặc định 5 người (bạn có thể thay)
-let names = ['Người 1','Người 2','Người 3','Người 4','Người 5'];
-
-// startIndex giúp dịch vòng quay (rotate)
+// ===== STATE =====
+let names = [...defaultNames];
 let startIndex = 0;
 
-const nameInputs = Array.from({length:5},(_,i)=>document.getElementById(`name${i}`));
+// ===== DOM ELEMENTS =====
+const namesInput = document.getElementById('names-input');
 const generateBtn = document.getElementById('generateBtn');
 const rotateBtn = document.getElementById('rotateBtn');
 const downloadBtn = document.getElementById('downloadBtn');
 const resetBtn = document.getElementById('resetBtn');
-const scheduleTableBody = document.querySelector('#scheduleTable tbody');
+const dayCards = Array.from({ length: 6 }, (_, i) => document.getElementById(`day-${i}`));
 
-function readNamesFromInputs(){
-  const vals = nameInputs.map(inp => inp.value.trim()).filter(v => v !== '');
-  if(vals.length === 5) return vals;
-  // nếu chưa nhập đủ 5 tên, lấy từng input nếu có, không trống thì thay, ngược lại dùng default theo vị trí
-  const result = nameInputs.map((inp,i)=> inp.value.trim() || names[i]);
-  return result;
-}
+// ===== FUNCTIONS =====
 
-function renderSchedule(){
-  names = readNamesFromInputs();
-  scheduleTableBody.innerHTML = '';
-  for(let i=0;i<days.length;i++){
-    const person = names[(startIndex + i) % names.length];
-    const tr = document.createElement('tr');
-    if(i === 0) tr.classList.add('highlight'); // optional: đánh dấu ngày đầu
-    const tdDay = document.createElement('td');
-    tdDay.textContent = days[i];
-    const tdPerson = document.createElement('td');
-    tdPerson.textContent = person;
-    tr.appendChild(tdDay);
-    tr.appendChild(tdPerson);
-    scheduleTableBody.appendChild(tr);
+/**
+ * Đọc danh sách người từ input hoặc sử dụng mặc định
+ */
+function readNamesFromInput() {
+  const inputValue = namesInput.value.trim();
+  if (inputValue) {
+    const parsed = inputValue.split(',').map(n => n.trim()).filter(n => n !== '');
+    if (parsed.length > 0) return parsed;
   }
+  return [...defaultNames];
 }
 
-function rotateOnce(){
+/**
+ * Sinh lịch trực tự động
+ */
+function renderSchedule() {
+  names = readNamesFromInput();
+  namesInput.value = names.join(', ');
+  
+  dayCards.forEach((card, i) => {
+    const person = names[(startIndex + i) % names.length];
+    const personElement = card.querySelector('.day-person');
+    personElement.textContent = person;
+    
+    // Animation effect
+    card.classList.remove('pulse');
+    setTimeout(() => card.classList.add('pulse'), 10);
+  });
+}
+
+/**
+ * Dịch vòng (rotate) danh sách người
+ */
+function rotateOnce() {
   startIndex = (startIndex + 1) % names.length;
   renderSchedule();
 }
 
-function downloadJSON(){
-  const schedule = days.map((d,i)=>({day:d, person: names[(startIndex+i)%names.length]}));
-  const blob = new Blob([JSON.stringify({generatedAt: new Date().toISOString(), schedule}, null, 2)], {type:'application/json'});
+/**
+ * Tải lịch dưới dạng JSON
+ */
+function downloadJSON() {
+  const schedule = days.map((d, i) => ({
+    day: d,
+    person: names[(startIndex + i) % names.length]
+  }));
+  
+  const data = {
+    generatedAt: new Date().toLocaleString('vi-VN'),
+    week: `${new Date().toLocaleDateString('vi-VN')}`,
+    schedule: schedule
+  };
+  
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'schedule.json';
+  a.download = `lich-truc-${new Date().toISOString().split('T')[0]}.json`;
   document.body.appendChild(a);
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
 }
 
-function resetDefaults(){
-  names = ['Người 1','Người 2','Người 3','Người 4','Người 5'];
+/**
+ * Khôi phục mặc định
+ */
+function resetDefaults() {
+  names = [...defaultNames];
   startIndex = 0;
-  nameInputs.forEach((inp,i)=> inp.value = '');
+  namesInput.value = names.join(', ');
   renderSchedule();
 }
 
+// ===== EVENT LISTENERS =====
 generateBtn.addEventListener('click', renderSchedule);
 rotateBtn.addEventListener('click', rotateOnce);
 downloadBtn.addEventListener('click', downloadJSON);
 resetBtn.addEventListener('click', resetDefaults);
 
-// khởi tạo UI với mặc định
-renderSchedule();
+// Hỗ trợ phím Enter trong input
+namesInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    renderSchedule();
+  }
+});
 
-// support Enter key: khi người dùng chỉnh input cuối và nhấn Enter -> generate
-nameInputs.forEach(inp => inp.addEventListener('keydown', (e)=>{
-  if(e.key === 'Enter') renderSchedule();
-}));
+// ===== INITIALIZATION =====
+// Hiển thị lịch tự động khi load trang
+renderSchedule();
