@@ -68,13 +68,14 @@ body {
 .day-card {
   background: white;
   border-radius: 16px;
-  padding: 30px 20px;
+  padding: 25px 15px;
   text-align: center;
   box-shadow: var(--shadow-lg);
   transition: all 0.3s ease;
-  border: 3px solid transparent;
+  border: 4px solid transparent;
   cursor: pointer;
   animation: slideUp 0.5s ease-out;
+  position: relative;
 }
 
 @keyframes slideUp {
@@ -93,6 +94,25 @@ body {
   box-shadow: 0 25px 35px rgba(0, 0, 0, 0.2);
 }
 
+.day-card.today {
+  border-color: #10b981 !important;
+  background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+}
+
+.day-card.today::after {
+  content: '★ HÔM NAY';
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #10b981;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
 .day-card:nth-child(1) { border-top-color: #ff6b6b; }
 .day-card:nth-child(2) { border-top-color: #4ecdc4; }
 .day-card:nth-child(3) { border-top-color: #45b7d1; }
@@ -103,67 +123,57 @@ body {
 .day-label {
   font-size: 1.1rem;
   font-weight: 600;
-  color: var(--text-light);
-  margin-bottom: 20px;
+  color: var(--text-dark);
+  margin-bottom: 8px;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
+.day-date {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+
 .day-person {
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 700;
-  color: var(--primary);
-  padding: 20px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  color: white;
+  padding: 18px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-radius: 12px;
-  min-height: 80px;
+  min-height: 70px;
   display: flex;
   align-items: center;
   justify-content: center;
   word-break: break-word;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
-/* ===== CONTROLS ===== */
-.controls {
+/* ===== INFO SECTION ===== */
+.info-section {
   background: white;
   border-radius: 16px;
-  padding: 30px;
+  padding: 25px;
   box-shadow: var(--shadow-lg);
-  margin-top: 20px;
 }
 
-.control-panel h2 {
+.current-week {
+  margin-bottom: 25px;
+}
+
+.current-week h3 {
   color: var(--text-dark);
-  margin-bottom: 25px;
-  font-size: 1.5rem;
+  margin-bottom: 12px;
+  font-size: 1.1rem;
 }
 
-.names-section {
-  margin-bottom: 25px;
-}
-
-.names-section label {
-  display: block;
+#namesList {
+  font-size: 1.1rem;
+  color: var(--primary);
   font-weight: 600;
-  margin-bottom: 10px;
-  color: var(--text-dark);
-  font-size: 1rem;
-}
-
-#names-input {
-  width: 100%;
-  padding: 12px 16px;
-  border: 2px solid var(--border-color);
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  font-family: inherit;
-}
-
-#names-input:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+  word-spacing: 8px;
 }
 
 /* ===== BUTTONS ===== */
@@ -258,13 +268,17 @@ body {
   }
 
   .day-person {
-    font-size: 1.5rem;
-    min-height: 70px;
+    font-size: 1.4rem;
+    min-height: 60px;
     padding: 15px;
   }
 
   .day-label {
     font-size: 0.95rem;
+  }
+
+  .day-date {
+    font-size: 0.85rem;
   }
 
   .buttons-group {
@@ -275,7 +289,7 @@ body {
     padding: 10px;
   }
 
-  .controls {
+  .info-section {
     padding: 20px;
   }
 }
@@ -294,22 +308,22 @@ body {
   }
 
   .day-card {
-    padding: 20px 15px;
+    padding: 15px 10px;
   }
 
   .day-person {
-    font-size: 1.3rem;
-    min-height: 60px;
-  }
-
-  #names-input {
-    font-size: 0.95rem;
-    padding: 10px 12px;
+    font-size: 1.2rem;
+    min-height: 55px;
   }
 
   .btn {
     padding: 10px 16px;
     font-size: 0.9rem;
+  }
+
+  .day-card.today::after {
+    font-size: 0.6rem;
+    padding: 3px 6px;
   }
 }
 

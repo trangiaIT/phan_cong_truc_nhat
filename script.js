@@ -1,71 +1,141 @@
 // ===== CONSTANTS =====
-const days = ['Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
-const defaultNames = ['Trang', 'Thảo', 'Khoa', 'Phương', 'Phúc'];
+const names = ['Trang', 'Thảo', 'Khoa', 'Phương', 'Phúc'];
+const daysOfWeek = ['Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
 
 // ===== STATE =====
-let names = [...defaultNames];
-let startIndex = 0;
+let weekOffset = 0; // 0 = tuần này, 1 = tuần sau, -1 = tuần trước
 
 // ===== DOM ELEMENTS =====
-const namesInput = document.getElementById('names-input');
-const generateBtn = document.getElementById('generateBtn');
-const rotateBtn = document.getElementById('rotateBtn');
-const downloadBtn = document.getElementById('downloadBtn');
-const resetBtn = document.getElementById('resetBtn');
+const weekInfo = document.getElementById('weekInfo');
+const namesList = document.getElementById('namesList');
 const dayCards = Array.from({ length: 6 }, (_, i) => document.getElementById(`day-${i}`));
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const resetBtn = document.getElementById('resetBtn');
+const downloadBtn = document.getElementById('downloadBtn');
 
-// ===== FUNCTIONS =====
+// ===== HELPER FUNCTIONS =====
 
 /**
- * Đọc danh sách người từ input hoặc sử dụng mặc định
+ * Tìm Thứ Hai của tuần chứa ngày cho trước
  */
-function readNamesFromInput() {
-  const inputValue = namesInput.value.trim();
-  if (inputValue) {
-    const parsed = inputValue.split(',').map(n => n.trim()).filter(n => n !== '');
-    if (parsed.length > 0) return parsed;
-  }
-  return [...defaultNames];
+function getMondayOfWeek(date) {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Điều chỉnh khi Sunday
+  return new Date(d.setDate(diff));
 }
 
 /**
- * Sinh lịch trực tự động
+ * Lấy Thứ Hai của tuần hiện tại + offset tuần
+ */
+function getMonday(offsetWeek = 0) {
+  const today = new Date();
+  const monday = getMondayOfWeek(today);
+  monday.setDate(monday.getDate() + offsetWeek * 7);
+  return monday;
+}
+
+/**
+ * Lấy ngày cho một slot (0-5 = Thứ 2-7)
+ */
+function getDateForDay(slotIndex, offsetWeek = 0) {
+  const monday = getMonday(offsetWeek);
+  const date = new Date(monday);
+  date.setDate(date.getDate() + slotIndex);
+  return date;
+}
+
+/**
+ * Tính số ngày từ mốc tính (Thứ 2 đầu tiên của năm hoặc mốc cố định)
+ */
+function getDaysSinceOrigin(date) {
+  // Mốc: Thứ 2 của tuần đầu tiên trong năm
+  const year = date.getFullYear();
+  const firstDay = new Date(year, 0, 1);
+  const firstMonday = getMondayOfWeek(firstDay);
+  
+  const timeDiff = date - firstMonday;
+  const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+  
+  return daysDiff;
+}
+
+/**
+ * Lấy người trực cho một ngày cụ thể
+ */
+function getPersonForDate(date) {
+  const daysSinceOrigin = getDaysSinceOrigin(date);
+  return names[daysSinceOrigin % names.length];
+}
+
+/**
+ * Định dạng ngày
+ */
+function formatDate(date) {
+  return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
+}
+
+/**
+ * Sinh lịch cho tuần
  */
 function renderSchedule() {
-  names = readNamesFromInput();
-  namesInput.value = names.join(', ');
+  const monday = getMonday(weekOffset);
+  const sunday = new Date(monday);
+  sunday.setDate(sunday.getDate() + 6);
   
-  dayCards.forEach((card, i) => {
-    const person = names[(startIndex + i) % names.length];
-    const personElement = card.querySelector('.day-person');
-    personElement.textContent = person;
+  // Cập nhật tiêu đề tuần
+  weekInfo.textContent = `Tuần từ ${formatDate(monday)} - ${formatDate(sunday)}`;
+  namesList.textContent = names.join(' → ')
+  
+  // Render từng ngày
+  dayCards.forEach((card, slotIndex) => {
+    const date = getDateForDay(slotIndex, weekOffset);
+    const person = getPersonForDate(date);
+    const dayLabel = card.querySelector('.day-label');
+    const dayDate = card.querySelector('.day-date');
+    const dayPerson = card.querySelector('.day-person');
     
-    // Animation effect
+    dayLabel.textContent = daysOfWeek[slotIndex];
+    dayDate.textContent = formatDate(date);
+    dayPerson.textContent = person;
+    
+    // Highlight ngày hôm nay
+    const today = new Date();
+    if (date.toDateString() === today.toDateString()) {
+      card.classList.add('today');
+    } else {
+      card.classList.remove('today');
+    }
+    
+    // Animation
     card.classList.remove('pulse');
     setTimeout(() => card.classList.add('pulse'), 10);
   });
 }
 
 /**
- * Dịch vòng (rotate) danh sách người
- */
-function rotateOnce() {
-  startIndex = (startIndex + 1) % names.length;
-  renderSchedule();
-}
-
-/**
  * Tải lịch dưới dạng JSON
  */
 function downloadJSON() {
-  const schedule = days.map((d, i) => ({
-    day: d,
-    person: names[(startIndex + i) % names.length]
-  }));
+  const schedule = [];
+  for (let i = 0; i < 6; i++) {
+    const date = getDateForDate(i, weekOffset);
+    schedule.push({
+      day: daysOfWeek[i],
+      date: formatDate(date),
+      person: getPersonForDate(date)
+    });
+  }
+  
+  const monday = getMonday(weekOffset);
+  const sunday = new Date(monday);
+  sunday.setDate(sunday.getDate() + 6);
   
   const data = {
     generatedAt: new Date().toLocaleString('vi-VN'),
-    week: `${new Date().toLocaleDateString('vi-VN')}`,
+    weekRange: `${formatDate(monday)} - ${formatDate(sunday)}`,
+    staffRotation: names,
     schedule: schedule
   };
   
@@ -73,36 +143,31 @@ function downloadJSON() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `lich-truc-${new Date().toISOString().split('T')[0]}.json`;
+  const weekStr = weekOffset === 0 ? 'hien-tai' : `+${weekOffset}`;
+  a.download = `lich-truc-tuan-${weekStr}.json`;
   document.body.appendChild(a);
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
 }
 
-/**
- * Khôi phục mặc định
- */
-function resetDefaults() {
-  names = [...defaultNames];
-  startIndex = 0;
-  namesInput.value = names.join(', ');
-  renderSchedule();
-}
-
 // ===== EVENT LISTENERS =====
-generateBu.addEventListener('click', renderSchedule);
-rotateBtn.addEventListener('click', rotateOnce);
-downloadBtn.addEventListener('click', downloadJSON);
-resetBtn.addEventListener('click', resetDefaults);
-
-// Hỗ trợ phím Enter trong input
-namesInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') {
-    renderSchedule();
-  }
+prevBtn.addEventListener('click', () => {
+  weekOffset--;
+  renderSchedule();
 });
 
+nextBtn.addEventListener('click', () => {
+  weekOffset++;
+  renderSchedule();
+});
+
+resetBtn.addEventListener('click', () => {
+  weekOffset = 0;
+  renderSchedule();
+});
+
+downloadBtn.addEventListener('click', downloadJSON);
+
 // ===== INITIALIZATION =====
-// Hiển thị lịch tự động khi load trang
 renderSchedule();

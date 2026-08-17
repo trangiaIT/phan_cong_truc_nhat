@@ -10,62 +10,59 @@
   <main class="container">
     <header class="header">
       <h1>📅 Lịch Trực Hàng Tuần</h1>
-      <p class="subtitle">Thứ 2 → Thứ 7 | 5 Người</p>
+      <p class="subtitle" id="weekInfo"></p>
     </header>
 
     <!-- Lịch hiển thị chính -->
     <section class="schedule-grid">
       <div class="day-card" id="day-0">
-        <div class="day-label">Thứ Hai</div>
+        <div class="day-label"></div>
+        <div class="day-date"></div>
         <div class="day-person"></div>
       </div>
       <div class="day-card" id="day-1">
-        <div class="day-label">Thứ Ba</div>
+        <div class="day-label"></div>
+        <div class="day-date"></div>
         <div class="day-person"></div>
       </div>
       <div class="day-card" id="day-2">
-        <div class="day-label">Thứ Tư</div>
+        <div class="day-label"></div>
+        <div class="day-date"></div>
         <div class="day-person"></div>
       </div>
       <div class="day-card" id="day-3">
-        <div class="day-label">Thứ Năm</div>
+        <div class="day-label"></div>
+        <div class="day-date"></div>
         <div class="day-person"></div>
       </div>
       <div class="day-card" id="day-4">
-        <div class="day-label">Thứ Sáu</div>
+        <div class="day-label"></div>
+        <div class="day-date"></div>
         <div class="day-person"></div>
       </div>
       <div class="day-card" id="day-5">
-        <div class="day-label">Thứ Bảy</div>
+        <div class="day-label"></div>
+        <div class="day-date"></div>
         <div class="day-person"></div>
       </div>
     </section>
 
-    <!-- Điều khiển & Tùy chỉnh -->
-    <section class="controls">
-      <div class="control-panel">
-        <h2>⚙️ Quản Lý</h2>
-        
-        <div class="names-section">
-          <label for="names-input">Danh sách người (cách nhau bằng dấu phẩy):</label>
-          <input 
-            type="text" 
-            id="names-input" 
-            placeholder="Trang, Thảo, Khoa, Phương, Phúc"
-          />
-        </div>
-
-        <div class="buttons-group">
-          <button id="generateBtn" class="btn btn-primary">🔄 Sinh Lịch</button>
-          <button id="rotateBtn" class="btn btn-secondary">↻ Dịch Vòng</button>
-          <button id="downloadBtn" class="btn btn-info">⬇️ Tải JSON</button>
-          <button id="resetBtn" class="btn btn-warning">🔃 Khôi Phục</button>
-        </div>
+    <!-- Thông tin & Điều khiển -->
+    <section class="info-section">
+      <div class="current-week">
+        <h3>👥 Danh sách người trực cố định:</h3>
+        <p id="namesList"></p>
+      </div>
+      <div class="buttons-group">
+        <button id="prevBtn" class="btn btn-secondary">◀️ Tuần Trước</button>
+        <button id="nextBtn" class="btn btn-primary">Tuần Sau ▶️</button>
+        <button id="resetBtn" class="btn btn-warning">🔄 Về Tuần Này</button>
+        <button id="downloadBtn" class="btn btn-info">⬇️ Tải JSON</button>
       </div>
     </section>
 
     <footer class="footer">
-      <p>💡 Có 6 ngày (Thứ 2 → Thứ 7) và 5 người → một người sẽ trực 2 lần trong tuần</p>
+      <p>💡 Lịch trực cố định: Trang → Thảo → Khoa → Phương → Phúc (chu kỳ 5 tuần)</p>
     </footer>
   </main>
 
