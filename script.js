@@ -91,7 +91,7 @@ function resetDefaults() {
 }
 
 // ===== EVENT LISTENERS =====
-generateBtn.addEventListener('click', renderSchedule);
+generateBu.addEventListener('click', renderSchedule);
 rotateBtn.addEventListener('click', rotateOnce);
 downloadBtn.addEventListener('click', downloadJSON);
 resetBtn.addEventListener('click', resetDefaults);

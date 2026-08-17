@@ -1,53 +1,74 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Lịch trực — Thứ 2 đến Thứ 7</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lịch Trực — Thứ 2 đến Thứ 7</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <main class="container">
-    <h1>Lịch trực (Thứ 2 → Thứ 7) — 5 người</h1>
+    <header class="header">
+      <h1>📅 Lịch Trực Hàng Tuần</h1>
+      <p class="subtitle">Thứ 2 → Thứ 7 | 5 Người</p>
+    </header>
 
+    <!-- Lịch hiển thị chính -->
+    <section class="schedule-grid">
+      <div class="day-card" id="day-0">
+        <div class="day-label">Thứ Hai</div>
+        <div class="day-person"></div>
+      </div>
+      <div class="day-card" id="day-1">
+        <div class="day-label">Thứ Ba</div>
+        <div class="day-person"></div>
+      </div>
+      <div class="day-card" id="day-2">
+        <div class="day-label">Thứ Tư</div>
+        <div class="day-person"></div>
+      </div>
+      <div class="day-card" id="day-3">
+        <div class="day-label">Thứ Năm</div>
+        <div class="day-person"></div>
+      </div>
+      <div class="day-card" id="day-4">
+        <div class="day-label">Thứ Sáu</div>
+        <div class="day-person"></div>
+      </div>
+      <div class="day-card" id="day-5">
+        <div class="day-label">Thứ Bảy</div>
+        <div class="day-person"></div>
+      </div>
+    </section>
+
+    <!-- Điều khiển & Tùy chỉnh -->
     <section class="controls">
-      <div class="names-inputs">
-        <label>Nhập 5 tên (hoặc để mặc định):</label>
-        <div class="inputs">
-          <input type="text" id="name0" placeholder="Người 1" />
-          <input type="text" id="name1" placeholder="Người 2" />
-          <input type="text" id="name2" placeholder="Người 3" />
-          <input type="text" id="name3" placeholder="Người 4" />
-          <input type="text" id="name4" placeholder="Người 5" />
+      <div class="control-panel">
+        <h2>⚙️ Quản Lý</h2>
+        
+        <div class="names-section">
+          <label for="names-input">Danh sách người (cách nhau bằng dấu phẩy):</label>
+          <input 
+            type="text" 
+            id="names-input" 
+            placeholder="Trang, Thảo, Khoa, Phương, Phúc"
+          />
+        </div>
+
+        <div class="buttons-group">
+          <button id="generateBtn" class="btn btn-primary">🔄 Sinh Lịch</button>
+          <button id="rotateBtn" class="btn btn-secondary">↻ Dịch Vòng</button>
+          <button id="downloadBtn" class="btn btn-info">⬇️ Tải JSON</button>
+          <button id="resetBtn" class="btn btn-warning">🔃 Khôi Phục</button>
         </div>
       </div>
-
-      <div class="buttons">
-        <button id="generateBtn">Tạo lịch</button>
-        <button id="rotateBtn" title="Dịch vòng 1 vị trí">Dịch (rotate)</button>
-        <button id="downloadBtn">Tải JSON</button>
-        <button id="resetBtn">Khôi phục mặc định</button>
-      </div>
     </section>
 
-    <section class="schedule">
-      <table id="scheduleTable">
-        <thead>
-          <tr>
-            <th>Ngày</th>
-            <th>Người trực</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- populated by script -->
-        </tbody>
-      </table>
-    </section>
-
-    <footer>
-      <small>Ghi chú: Có 6 ngày (Thứ 2 → Thứ 7). Khi có 5 người, một người sẽ trực 2 lần trong tuần — thuật toán sẽ phân công theo vòng quay.</small>
+    <footer class="footer">
+      <p>💡 Có 6 ngày (Thứ 2 → Thứ 7) và 5 người → một người sẽ trực 2 lần trong tuần</p>
     </footer>
   </main>
+
   <script src="script.js"></script>
 </body>
 </html>
